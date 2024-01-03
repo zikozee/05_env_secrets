@@ -4,12 +4,25 @@ on:
     branches:
       - main
       - dev
+
+# available for all jobs
+env:
+  MONGODB_DB_NAME: gha-demo
 jobs:
   test:
+    # environment variable available only for test job and can override jobs level env
+    env:
+      MONGODB_CLUSTER_ADDRESS: cluster0.ft6zcmv.mongodb.net
+      MONGODB_USERNAME: zikozee
+      MONGODB_PASSWORD: 5jGRzV2EgSZdKUS5
+      PORT: 8080
     environment: testing
     runs-on: ubuntu-latest
     steps:
       - name: Get Code
+        # environment variable available only for Get Code Step and can override jobs and Job level env
+        #env:
+        #  AA: cc
         uses: actions/checkout@v3
       - name: Cache dependencies
         uses: actions/cache@v3
@@ -19,15 +32,17 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Run server
-        run: npm start & npx wait-on http://127.0.0.1:XYZ
+        run: npm start & npx wait-on http://127.0.0.1:$PORT
       - name: Run tests
         run: npm test
       - name: Output information
-        run: echo "..."
+        run: echo "MONGODB_USERNAME:: ${{ env.MONGODB_USERNAME }}"
   deploy:
     needs: test
     runs-on: ubuntu-latest
     steps:
       - name: Output information
-        run: |        
-          echo "..."
+        ## first env MONGODB_USERNAME below is out of scope
+        run: |
+          echo "MONGODB_USERNAME:: ${{ env.MONGODB_USERNAME }}"
+          echo "MONGO_DB_NAME:: ${{ env.MONGODB_DB_NAME }}"
