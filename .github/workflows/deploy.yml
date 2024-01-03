@@ -10,7 +10,7 @@ env:
   MONGODB_DB_NAME: gha-demo
 jobs:
   test:
-    # env variable available only for test job and can override jobs level env
+    # env variable available only for test job and can override jobs level env.
     # the environment i.e testing secrets will be used instead of the general one created
     environment: testing
     env:
